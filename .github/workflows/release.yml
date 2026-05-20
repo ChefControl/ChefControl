@@ -1,0 +1,153 @@
+name: Release CV
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build DOCX
+        run: npm run build
+
+      - name: Install LibreOffice Writer + Calibri-compat font + poppler-utils
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends libreoffice-writer fonts-crosextra-carlito poppler-utils
+
+      - name: Convert DOCX to PDF
+        run: |
+          soffice --headless --convert-to pdf --outdir dist dist/Oran_Dan_Resume.docx
+          ls -la dist/
+
+      - name: Run validation tests
+        id: tests
+        run: |
+          set +e
+          rows=()
+          overall_status=0
+
+          run_test() {
+            local name="$1" expected="$2" actual="$3"
+            local status
+            if [ "$actual" = "$expected" ]; then
+              status="✅ pass"
+            else
+              status="❌ fail"
+              overall_status=1
+            fi
+            rows+=("| $name | \`$expected\` | \`$actual\` | $status |")
+          }
+
+          # Test 1: PDF page count is exactly 1
+          pages=$(pdfinfo dist/Oran_Dan_Resume.pdf | awk '/^Pages:/ {print $2}')
+          run_test "PDF page count" "1" "$pages"
+
+          # Build the markdown table once, reuse for step summary + PR comment output
+          {
+            echo "## 🧪 CV build validation"
+            echo ""
+            echo "| Test | Expected | Actual | Status |"
+            echo "| --- | --- | --- | --- |"
+            for row in "${rows[@]}"; do
+              echo "$row"
+            done
+          } > /tmp/test-table.md
+
+          cat /tmp/test-table.md | tee -a "$GITHUB_STEP_SUMMARY"
+
+          # Expose the table as a multiline step output so later steps can embed it
+          {
+            echo "table<<TABLE_EOF"
+            cat /tmp/test-table.md
+            echo "TABLE_EOF"
+          } >> "$GITHUB_OUTPUT"
+
+          if [ "$overall_status" -ne 0 ]; then
+            echo "::error file=data/resume.yaml::One or more validation tests failed. See the run summary."
+            exit 1
+          fi
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: resume
+          path: |
+            dist/Oran_Dan_Resume.docx
+            dist/Oran_Dan_Resume.pdf
+
+      - name: Render PDF page 1 to PNG (PR preview)
+        if: always() && github.event_name == 'pull_request' && hashFiles('dist/Oran_Dan_Resume.pdf') != ''
+        run: |
+          pdftoppm -r 150 -f 1 -l 1 -png dist/Oran_Dan_Resume.pdf dist/preview
+          mv dist/preview-1.png dist/preview.png
+          ls -la dist/preview.png
+
+      - name: Publish preview to pr-previews branch
+        if: always() && github.event_name == 'pull_request' && hashFiles('dist/preview.png') != ''
+        env:
+          PR_NUM: ${{ github.event.pull_request.number }}
+        run: |
+          cp dist/preview.png /tmp/preview.png
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git ls-remote --exit-code --heads origin pr-previews >/dev/null; then
+            git fetch origin pr-previews
+            git switch pr-previews
+          else
+            git switch --orphan pr-previews
+            git rm -rf . 2>/dev/null || true
+          fi
+          mkdir -p previews
+          cp /tmp/preview.png "previews/pr-${PR_NUM}.png"
+          git add "previews/pr-${PR_NUM}.png"
+          if git diff --staged --quiet; then
+            echo "Preview PNG unchanged — skipping commit/push"
+          else
+            git commit -m "Preview for PR #${PR_NUM} @ ${GITHUB_SHA}"
+            git push origin pr-previews
+          fi
+
+      - name: Comment preview on PR
+        if: always() && github.event_name == 'pull_request'
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: cv-preview
+          message: |
+            ${{ steps.tests.outputs.table }}
+
+            ### 📄 CV preview
+
+            ![CV preview](https://raw.githubusercontent.com/${{ github.repository }}/pr-previews/previews/pr-${{ github.event.pull_request.number }}.png?sha=${{ github.sha }})
+
+            _Rendered from [`${{ github.sha }}`](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }})_
+
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/Oran_Dan_Resume.docx
+            dist/Oran_Dan_Resume.pdf
+          generate_release_notes: true

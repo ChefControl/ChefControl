@@ -1,0 +1,13 @@
+{
+  "name": "chefcontrol-resume",
+  "version": "1.0.0",
+  "private": true,
+  "description": "CV-as-code for @ChefControl — single YAML source, DOCX + PDF release pipeline.",
+  "scripts": {
+    "build": "node src/build.js"
+  },
+  "dependencies": {
+    "docx": "^9.0.0",
+    "js-yaml": "^4.1.0"
+  }
+}

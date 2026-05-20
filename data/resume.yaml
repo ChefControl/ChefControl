@@ -1,0 +1,107 @@
+# Single source of truth for the CV.
+# Edit content here, then push a tag (v*.*.*) to trigger the release pipeline.
+#
+# Bullet schema notes:
+#   - Each bullet has a `runs` list. Each run is either a plain string (regular text)
+#     or {text, bold: true} for inline bold spans. Whitespace is significant -
+#     include the trailing space inside the bold span when needed.
+
+header:
+  name_first: "Oran"        # rendered light gray
+  name_last: "Dan"          # rendered black bold
+  contact:
+    - "Oran.dan@outlook.com"
+    - "Cloud DevOps Engineer"
+    - "Israel  ·  Israeli & Portuguese (EU)"
+  # Clickable link rendered below the contact line. Points readers to the
+  # latest GitHub Release this build was attached to.
+  latest_release_url: "https://github.com/ChefControl/ChefControl/releases/latest"
+
+experience:
+  - company: "Varonis"
+    location: "Herzliya, Israel"
+    title: "DevOps Engineer"
+    dates: "Feb 2025 – Present"
+    bullets:
+      - runs:
+          - { text: "Agentic Development: ", bold: true }
+          - "Agentically developed "
+          - { text: "Ferriscope", bold: true }
+          - ", a Rust-based pipeline blast-radius analyzer exposed over "
+          - { text: "MCP", bold: true }
+          - "; led the "
+          - { text: "DevOps Awesome Copilot", bold: true }
+          - " initiative at Varonis - an internal marketplace of Copilot/Claude skills, MCPs, and plugins for the DevOps team."
+      - runs:
+          - { text: "Multi-Cloud Operations: ", bold: true }
+          - "Run production workloads on AWS and Azure (AKS, Azure Functions, Blob Storage). The platform covers 2000+ pods per cluster and 25+ Kubernetes clusters across dev, test, and prod."
+      - runs:
+          - { text: "Continuous Delivery: ", bold: true }
+          - "Own the deployment pipelines in Azure DevOps and GitHub. Releases ship on a weekly cadence with automated tests and security gates wired into each stage."
+      - runs:
+          - { text: "Kubernetes & GitOps: ", bold: true }
+          - "Ran GitOps-based Kubernetes delivery with Helm and ArgoCD across Deployments, Jobs, and KEDA autoscalers."
+      - runs:
+          - { text: "IaC & Automation: ", bold: true }
+          - "Write infrastructure modules in Terraform and ops tooling in Python, Bash, Rust, and PowerShell."
+
+  - company: "Applied Materials R&D"
+    location: "Rehovot, Israel"
+    title: "DevOps & Infrastructure Developer"
+    dates: "Mar 2022 – Feb 2025"
+    bullets:
+      - runs:
+          - { text: "In-house CI Engine: ", bold: true }
+          - "Developed and maintained a custom CI engine purpose-built for the team's CI/CD needs - targeting Kubernetes and Linux VMs in air-gapped environments where standard CI tools couldn't reach."
+      - runs:
+          - { text: "Infrastructure Automation: ", bold: true }
+          - "Effectively employed infrastructure automation techniques, utilizing tools like Terraform and Ansible to automate and orchestrate the provisioning and management of infrastructure."
+      - runs:
+          - { text: "Team Collaboration: ", bold: true }
+          - "Worked closely with our application and infrastructure team to understand the customer requirements and develop solutions and features tailored to that."
+
+  - company: "BDO Cyber Division"
+    location: "Tel-Aviv, Israel"
+    title: "Security Operations Center Analyst"
+    dates: "Dec 2020 – Dec 2021"
+    bullets:
+      - runs:
+          - "Handled incidents across "
+          - { text: "10–20 enterprise clients", bold: true }
+          - " on "
+          - { text: "Cortex XDR, Demisto XSOAR, CrowdStrike, and ELK", bold: true }
+          - ". Closed "
+          - { text: "hundreds of cases", bold: true }
+          - " over the year."
+      - runs:
+          - "Covered 24/7 SOC monitoring and incident response for clients including "
+          - { text: "Carlsberg, Orbia, and eToro", bold: true }
+          - "."
+      - runs:
+          - "Ran "
+          - { text: "malware hunts and vulnerability sweeps", bold: true }
+          - " against client networks. Tuned XSOAR playbooks so the team stopped touching the same alerts twice."
+
+  - company: "Israel Defense Forces, C4I Corps Unit 372"
+    location: "Central Israel"
+    title: "Network Operations Center Team Lead"
+    dates: "May 2019 – Nov 2020"
+    bullets:
+      - runs:
+          - "Ran 24/7 NOC shift coverage for the unit's networks, servers, and C4I systems. "
+          - { text: "Awards: ", bold: true }
+          - "Unit 372 Award of Excellence; Outstanding Sergeant Unit Award."
+
+skills:
+  - label: "Cloud & Infra"
+    value: "AWS, Azure, Terraform, Ansible, Packer, Docker, Kubernetes, Helm, ArgoCD"
+  - label: "CI/CD & Tools"
+    value: "Azure DevOps, Jenkins, GitHub, Git, Grafana"
+  - label: "Scripting"
+    value: "Python, Bash, PowerShell, Rust"
+  - label: "AI Tools"
+    value: "GitHub Copilot, OpenAI Codex, Claude"
+  - label: "Agentic Development Workflows"
+    value: "Built a distributed Rust web crawler end-to-end with Claude — Rust/React, Helm, worktree.io workflow in CI. Ref: github.com/nabi-allenby/web-crawler"
+  - label: "Languages"
+    value: "English (Full professional), Hebrew (Native)"
