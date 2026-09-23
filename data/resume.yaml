@@ -11,6 +11,7 @@ header:
   name_last: "Dan"          # rendered black bold
   contact:
     - "Oran.dan@outlook.com"
+    - "+972 50 8198026"
     - "Cloud DevOps Engineer"
     - "Israel  ·  Israeli & Portuguese (EU)"
   # Clickable link rendered below the contact line. Points readers to the
