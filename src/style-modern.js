@@ -138,18 +138,18 @@ function headerName(nameFirst, nameLast) {
 function headerContact(parts, releaseUrl) {
   const children = [];
   parts.forEach((p, i) => {
-    if (i > 0) children.push(new TextRun({ text: "  |  ", font: FONT, size: 22, color: C.light }));
-    children.push(new TextRun({ text: p, font: FONT, size: 22, color: C.bullet }));
+    if (i > 0) children.push(new TextRun({ text: " | ", font: FONT, size: 20, color: C.light }));
+    children.push(new TextRun({ text: p, font: FONT, size: 20, color: C.bullet }));
   });
   if (releaseUrl) {
-    children.push(new TextRun({ text: "  |  ", font: FONT, size: 22, color: C.light }));
+    children.push(new TextRun({ text: " | ", font: FONT, size: 20, color: C.light }));
     children.push(new ExternalHyperlink({
       link: releaseUrl,
       children: [
         new TextRun({
           text: "↗ Latest version",
           font: FONT,
-          size: 22,
+          size: 20,
           color: "1F4E79",
           underline: { type: UnderlineType.SINGLE, color: "1F4E79" },
         }),
